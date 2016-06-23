@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head>
+	<title>GitHub API and AngularJS</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="style.css">
+
+	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	<script src="js/get.js" type="text/javascript"></script>
+	<script src="js/app.js" type="text/javascript"></script>
+</head>
+<body ng-controller="userController">
+	<div class="container text-center" style="width: 60%;" ng-controller="inputController">
+		<div ng-show="show==true">
+			<h1 style="padding: 5rem;">Please enter your GitHub username and personal access token</h1>
+			<a target="_blank" href="https://help.github.com/articles/creating-an-access-token-for-command-line-use/">Don't have a personal access token? Click here</a>
+			<div class="form-group text-center" style="width:40%; margin: auto; padding-bottom: 3rem;">
+				<input ng-model="username" type="text" class="form-control" placeholder="Username">
+			</div>
+			<div class="form-group text-center" style="width:40%; margin: auto;">
+				<input ng-model="token" type="password" class="form-control" placeholder="Token">
+			</div>
+			<a class="btn btn-primary" style="margin:3rem" role="button" ng-click="show = !show; changeShow(); loadUser(username, token);">OK</a>
+		</div>
+	</div>
+	<div ng-show="userShow==true">
+		<div class="jumbotron" style="background-color: #BBB">
+			<div class="text-centered">
+				<img style="float: right; padding-right: 5%;" src="{{user.avatar_url}}">
+				<h1 style="padding-left: 5%;">Hello, {{username}}</h1>
+			</div>
+		</div>
+		<div class="container" style="height: 100%; width: 80%;">
+			<div class="row">
+				<h2 class="col-md-8">Repos</h2>
+				<div class="dropdown col-md-2">
+				    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+				    Order by
+				    <span class="caret"></span>
+				    </button>
+				    <ul class="dropdown-menu" ng-model="option">
+				        <li><a ng-click="option='id'">ID</a></li>
+				        <li><a ng-click="option='created_at'">Created</a></li>
+				        <li><a ng-click="option='name'">Name</a></li>
+				        <li><a ng-click="option='description'">Description</a></li>
+				        <li><a ng-click="option='html_url'">URL</a></li>
+				        <li><a ng-click="option='stargazers_count'">Stars</a></li>
+				        <li><a ng-click="option='fork'">Forked</a></li>
+				    </ul>
+				</div>
+				<div class="dropdown col-md-2">
+				    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+				    Type
+				    <span class="caret"></span>
+				    </button>
+				    <ul class="dropdown-menu" ng-model="reverse">
+				        <li><a ng-click="reverse=true">Descending</a></li>
+				        <li><a ng-click="reverse=false">Ascending</a></li>
+				    </ul>
+				</div>
+			</div>
+			<table class="table table-hover">
+				<thead>
+					<th>ID</th>
+					<th>Created</th>
+					<th>Name</th>
+					<th>Description</th>
+					<th>URL</th>
+					<th>Stars</th>
+					<th>Forked</th>
+				</thead>
+				<tbody>
+					<tr ng-repeat="repo in repos | orderBy: option:reverse">
+						<td>{{ repo.id }}</td>
+						<td>{{ repo.created_at }}</td>
+						<td><strong>{{ repo.name }}</strong></td>
+						<td>{{ repo.description }}</td>
+						<td><a href="{{repo.html_url}}">{{ repo.html_url }}</a></td>
+						<td><span class="glyphicon glyphicon-star" style="color: #E8DC2F; padding-right: .5rem;"></span>{{ repo.stargazers_count }}</td>
+						<td>{{ repo.fork }}</td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="gists" ng-init="files=gists.files">
+				<h2>Gists</h2>
+				<div ng-repeat="n in range(1,gistsCount)">
+					<div ng-repeat="file in gists[n-1].files">
+						<h3>{{ file.filename }}</h3>
+						<div class="jumbotron">
+							<code>{{ file.code }}</code>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
